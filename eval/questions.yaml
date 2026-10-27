@@ -1,0 +1,70 @@
+# Evaluation questions.
+#
+# expected_tools:     the answer is acceptable if the agent called at least one of these
+# expected_scenarios: the answer must name every project the generator planted with these problems
+#                     (looked up in data/ground_truth.csv at run time, so it works for any seed)
+# project_from:       fill {project} in the question with a project from this scenario
+# must_refuse:        the project doesn't exist; the agent must say so and not invent figures
+
+- id: losing_money
+  question: Which projects are losing money?
+  expected_tools: [lowest_margin_projects, risk_overview, declining_margin_projects]
+  expected_scenarios: [margin_collapse]
+
+- id: margin_slipping
+  question: Where has margin been slipping over the last three months?
+  expected_tools: [declining_margin_projects]
+  expected_scenarios: [margin_collapse]
+
+- id: unpaid_invoices
+  question: Which clients haven't paid their invoices?
+  expected_tools: [overdue_invoice_projects, risk_overview]
+  expected_scenarios: [overdue_invoices]
+
+- id: unbilled_work
+  question: Are there projects where we've done the work but not billed the client?
+  expected_tools: [overdue_wip_projects, unbilled_revenue_projects, risk_overview]
+  expected_scenarios: [wip_no_invoicing]
+
+- id: contingency
+  question: Which projects have burned through their contingency?
+  expected_tools: [contingency_erosion_projects, risk_overview]
+  expected_scenarios: [contingency_erosion]
+
+- id: admin_costs
+  question: Are any projects spending far too much on admin?
+  expected_tools: [admin_cost_outliers, risk_overview]
+  expected_scenarios: [admin_overrun]
+
+- id: worried
+  question: What should I be worried about in the portfolio?
+  expected_tools: [risk_overview]
+  expected_scenarios: [margin_collapse, overdue_invoices, wip_no_invoicing, contingency_erosion, admin_overrun]
+
+- id: overall_margin
+  question: What's our overall gross margin this month?
+  expected_tools: [portfolio_summary]
+  expected_scenarios: []
+
+- id: margin_trend
+  question: How has the portfolio's margin changed over the year?
+  expected_tools: [portfolio_trend]
+  expected_scenarios: []
+
+- id: project_deep_dive
+  question: Tell me how {project} is doing.
+  project_from: margin_collapse
+  expected_tools: [project_details, project_history, search_projects]
+  expected_scenarios: []
+
+- id: project_contingency_history
+  question: How has contingency changed month by month on {project}?
+  project_from: contingency_erosion
+  expected_tools: [project_history]
+  expected_scenarios: []
+
+- id: unknown_project
+  question: What's the gross margin on the Thames Tunnel Ventilation project?
+  expected_tools: [search_projects, project_details]
+  expected_scenarios: []
+  must_refuse: true
